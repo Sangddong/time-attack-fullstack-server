@@ -14,17 +14,33 @@ datasource db {
 }
 
 model User {
-  id                String @id
-  email             String @unique
+  id                String      @id
+  email             String      @unique
   encryptedPassword String
+  likedDeals        LikeDeals[]
+  deals             Deals[]
 }
 
 model Deals {
   //판매 상품 이미지, 제목, 내용, 가격, 위치
-  id       Int    @id @default(autoincrement())
-  title    String
-  content  String
-  imgURL   String
-  price    Int
-  location String
+  id         Int         @id @default(autoincrement())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  title      String
+  content    String
+  imgURL     String
+  price      Int
+  location   String
+  likes      Int?
+  views      Int?
+  likedUsers LikeDeals[]
+}
+
+model LikeDeals {
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  dealId Int
+  deal   Deals  @relation(fields: [dealId], references: [id])
+
+  @@id([userId, dealId])
 }
