@@ -12,3 +12,19 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id                String @id
+  email             String @unique
+  encryptedPassword String
+}
+
+model Deals {
+  //판매 상품 이미지, 제목, 내용, 가격, 위치
+  id       Int    @id @default(autoincrement())
+  title    String
+  content  String
+  imgURL   String
+  price    Int
+  location String
+}
