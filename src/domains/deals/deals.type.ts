@@ -1,5 +1,6 @@
+import { Prisma, User } from '@prisma/client';
+
 export type CreateDeal = {
-  userId: string;
   title: string;
   content: string;
   imgURL: string;

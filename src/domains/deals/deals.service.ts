@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma/prisma.service';
 import { CreateDeal, UpdateDeal } from './deals.type';
-
+import { Prisma, User } from '@prisma/client';
 @Injectable()
 export class DealsService {
   constructor(private readonly prismaService: PrismaService) { }
@@ -15,20 +15,24 @@ export class DealsService {
   async getDeal(dealId: number) {
     const deal = await this.prismaService.deals.findUnique({
       where: { id: dealId },
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
     });
 
     return deal;
   }
 
-  // DealsService 내부
-
-  async createDeal(data: CreateDeal, userId: string) {
+  async createDeal(data: Prisma.DealsCreateInput) {
     const newDeal = await this.prismaService.deals.create({
       data: {
         ...data,
-        userId,
       },
     });
+
+    console.log(data);
     return newDeal;
   }
 
@@ -47,19 +51,5 @@ export class DealsService {
     });
 
     return deal;
-  }
-
-  async updateView(dealId: number) {
-    const dealView = await this.prismaService.deals.update({
-      where: {
-        id: dealId,
-      },
-      data: {
-        views: {
-          increment: 1,
-        },
-      },
-    });
-    return dealView;
   }
 }

@@ -34,8 +34,7 @@ export class DealsController {
 
   @Post('create')
   async createDeal(@Req() req: AuthRequest, @Body() data: CreateDeal) {
-    const userId = req.user.id;
-    return this.dealsService.createDeal(data, userId);
+    return this.dealsService.createDeal(data);
   }
 
   @Patch(':dealId/edit')
