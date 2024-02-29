@@ -6,14 +6,15 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  Req,
   Body,
+  Req,
 } from '@nestjs/common';
 import { DealsService } from './deals.service';
 import { CreateDeal, UpdateDeal } from './deals.type';
+import { Private } from 'src/decorator/private.decorator';
 import { PrismaService } from 'src/prisma/prisma/prisma.service';
-import { Request } from 'express';
-import { AuthRequest } from 'src/types/user.type';
+import { User } from '@prisma/client';
+import { DUser } from 'src/decorator/user.decorator';
 
 @Controller('deals')
 export class DealsController {
@@ -33,22 +34,23 @@ export class DealsController {
   }
 
   @Post('create')
-  async createDeal(@Req() req: AuthRequest, @Body() data: CreateDeal) {
-    return this.dealsService.createDeal(data);
+  @Private('user')
+  async createDeal(@DUser() user: User, @Body() dto: CreateDeal) {
+    return this.dealsService.createDeal({ ...dto, userId: user.id });
   }
 
   @Patch(':dealId/edit')
-  async updateDeal(@Param('dealId') dealId: number, @Body() data: UpdateDeal) {
+  @Private('user')
+  async updateDeal(
+    @Param('dealId', ParseIntPipe) dealId: number,
+    @Body() data: UpdateDeal,
+  ) {
     return this.dealsService.updateDeal(dealId, data);
   }
 
   @Delete(':dealId')
-  async deleteDeal(@Param('dealId') dealId: number) {
+  @Private('user')
+  async deleteDeal(@Param('dealId', ParseIntPipe) dealId: number) {
     return this.dealsService.deleteDeal(dealId);
-  }
-
-  @Patch(':dealId')
-  updateViews(@Param('dealId') dealId: number) {
-    return this.dealsService.updateView(dealId);
   }
 }

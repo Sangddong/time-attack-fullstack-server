@@ -32,7 +32,7 @@ model Deals {
   price      Int
   location   String
   likes      Int?
-  views      Int?
+  views      Int         @default(0)
   likedUsers LikeDeals[]
 }
 

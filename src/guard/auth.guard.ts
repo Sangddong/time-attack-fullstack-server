@@ -10,7 +10,6 @@ import { Request } from 'express';
 import { JwtPayload, verify } from 'jsonwebtoken';
 import { AccountType } from 'src/domains/accounts/accounts.type';
 import { PrismaService } from 'src/prisma/prisma/prisma.service';
-import { AuthRequest } from 'src/types/user.type';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -31,7 +30,7 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest<AuthRequest>();
+    const request = context.switchToHttp().getRequest();
     const accessToken = this.extractTokenFromHeader(request);
     if (!accessToken) throw new UnauthorizedException();
 
@@ -60,6 +59,7 @@ export class AuthGuard implements CanActivate {
 
   private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    console.log(token);
     return type === 'Bearer' ? token : undefined;
   }
 }
